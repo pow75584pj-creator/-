@@ -1187,8 +1187,20 @@ function NumberInput({
         step={0.5}
         value={value}
         onChange={(e) => {
-          if (e.target.value === '') return;
-          onChange(Number(e.target.value));
+
+          const v = e.target.value;
+          setText(v);
+
+          if (v !== '') {
+            onChange(Number(v));
+          }
+        }}
+        className="w-full rounded-[14px] px-4 py-3 focus:outline-none pr-12"
+        style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-default)',
+          color: 'var(--text-primary)',
+
         }}
         className="w-full rounded-[14px] px-4 py-3 focus:outline-none pr-12"
         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
