@@ -52,6 +52,7 @@ export function SettingsScreen({
   const [confirmClear, setConfirmClear] = useState(false);
   const [restoreFile, setRestoreFile] = useState<string | null>(null);
   const [restoreName, setRestoreName] = useState('');
+  const [pendingImport, setPendingImport] = useState<AppState | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [editingSp, setEditingSp] = useState<SpecialLeaveType | null>(null);
   const [confirmSpDelete, setConfirmSpDelete] = useState<SpecialLeaveType | null>(null);
@@ -96,18 +97,18 @@ export function SettingsScreen({
   function handlePickRestoreFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    setRestoreFile(file.name);
-    setRestoreName(file.name);
     const reader = new FileReader();
     reader.onload = () => {
       try {
         const text = String(reader.result);
-        importState(text); // validate
+        const imported = importState(text);
+        setPendingImport(imported);
         setRestoreFile(file.name);
         setRestoreName(file.name);
       } catch {
         setImportMsg('復元失敗: ファイルが不正です');
         setRestoreFile(null);
+        setPendingImport(null);
       }
     };
     reader.readAsText(file);
@@ -115,22 +116,12 @@ export function SettingsScreen({
   }
 
   function handleConfirmRestore() {
-    if (!restoreFile) return;
-    const file = fileRef.current?.files?.[0];
-    if (!file) { setRestoreFile(null); return; }
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        const imported = importState(String(reader.result));
-        onImport(imported);
-        setImportMsg('復元しました');
-      } catch {
-        setImportMsg('復元失敗: ファイルが不正です');
-      }
-    };
-    reader.readAsText(file);
+    if (!pendingImport) { setRestoreFile(null); return; }
+    onImport(pendingImport);
+    setImportMsg('復元しました');
     setRestoreFile(null);
     setRestoreName('');
+    setPendingImport(null);
   }
 
   function handleClear() {
@@ -970,7 +961,7 @@ export function SettingsScreen({
             )}
             <div className="flex gap-3 mt-5">
               <button
-                onClick={() => { setRestoreFile(null); setRestoreName(''); }}
+                onClick={() => { setRestoreFile(null); setRestoreName(''); setPendingImport(null); }}
                 className="btn-press flex-1 py-3 rounded-[14px] font-medium transition flex items-center justify-center gap-1.5"
                 style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-secondary)' }}
               >
