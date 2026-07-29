@@ -34,6 +34,7 @@ export function HistoryScreen({
   specialLeaveRecords,
   specialLeaveTypes,
   workingHours,
+  settings,
   onEdit,
   onDelete,
   onEditSpecial,
