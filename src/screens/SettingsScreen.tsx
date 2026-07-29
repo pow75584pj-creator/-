@@ -12,15 +12,7 @@ import {
   computeTenure, defaultFirstGrantDate, grantDaysAtDate, grantDaysForTenure, GRANT_TABLE,
 } from '@/lib/calc';
 import {
-  clearState,
-  createAutoBackup,
-  defaultSettings,
-  exportState,
-  getAutoBackups,
-  importState,
-  SPECIAL_LEAVE_COLORS,
-  SPECIAL_LEAVE_COLOR_KEYS,
-  uid,
+  clearState, defaultSettings, exportState, importState, SPECIAL_LEAVE_COLORS, SPECIAL_LEAVE_COLOR_KEYS, uid,
 } from '@/lib/storage';
 import {
   getPermissionState, requestPermission, runStartupNotifications, type NotificationPermissionState,
@@ -66,10 +58,9 @@ export function SettingsScreen({
   const [confirmSpDelete, setConfirmSpDelete] = useState<SpecialLeaveType | null>(null);
   const [grantAccordionOpen, setGrantAccordionOpen] = useState(false);
   const [spAccordionOpen, setSpAccordionOpen] = useState(false);
-  const autoBackups = getAutoBackups();
+
   const spTypes = state.specialLeaveTypes;
   const spSummary = useMemo(() => computeSpecialLeaveSummary(state), [state]);
-  const autoBackups = getAutoBackups();
 
   useEffect(() => { setPermState(getPermissionState()); }, []);
 
@@ -125,22 +116,17 @@ export function SettingsScreen({
   }
 
   function downloadPreRestoreBackup() {
-  createAutoBackup(state);
-
-  const now = new Date();
-  const pad = (n: number) => String(n).padStart(2, '0');
-  const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
-
-  const blob = new Blob([exportState(state)], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `有給管理_復元前バックアップ_${ts}.json`;
-  a.click();
-
-  URL.revokeObjectURL(url);
-}
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+    const blob = new Blob([exportState(state)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `有給管理_復元前バックアップ_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
 
   function handleConfirmRestore() {
     if (!pendingImport) { setRestoreFile(null); return; }
@@ -898,37 +884,7 @@ export function SettingsScreen({
             </div>
           </button>
           <input ref={fileRef} type="file" accept="application/json,.json" onChange={handlePickRestoreFile} className="hidden" />
-          {autoBackups.length > 0 && (
-  <div
-    className="rounded-[14px] p-3"
-    style={{
-      background: 'var(--bg-subtle)',
-      border: '1px solid var(--border-default)',
-    }}
-  >
-    <p
-      className="text-[14px] font-medium"
-      style={{ color: 'var(--text-secondary)' }}
-    >
-      自動バックアップ
-    </p>
 
-    <p
-      className="text-[13px] mt-1"
-      style={{ color: 'var(--text-muted)' }}
-    >
-      保存数 {autoBackups.length}/3件
-    </p>
-
-    <p
-      className="text-[13px]"
-      style={{ color: 'var(--text-muted)' }}
-    >
-      最終保存日時：
-      {new Date(autoBackups[0].createdAt).toLocaleString('ja-JP')}
-    </p>
-  </div>
-)}
           {importMsg && (
             <p className="text-[15px] text-center font-medium" style={{ color: importMsg.includes('失敗') ? 'rgb(255, 59, 48)' : '#0d9488' }}>
               {importMsg}
