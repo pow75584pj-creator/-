@@ -115,10 +115,28 @@ export function SettingsScreen({
     e.target.value = '';
   }
 
+  function downloadPreRestoreBackup() {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+    const blob = new Blob([exportState(state)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `有給管理_復元前バックアップ_${ts}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   function handleConfirmRestore() {
     if (!pendingImport) { setRestoreFile(null); return; }
-    onImport(pendingImport);
-    setImportMsg('復元しました');
+    try {
+      downloadPreRestoreBackup();
+      onImport(pendingImport);
+      setImportMsg('復元しました（復元前バックアップを保存しました）');
+    } catch {
+      setImportMsg('復元失敗: 現在のデータは保持されています');
+    }
     setRestoreFile(null);
     setRestoreName('');
     setPendingImport(null);
@@ -954,6 +972,7 @@ export function SettingsScreen({
             <h3 className="text-[17px] font-semibold text-center" style={{ color: 'var(--text-primary)' }}>バックアップを復元</h3>
             <p className="text-[15px] text-center mt-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               現在のデータは上書きされます。<br />
+              復元前に現在のデータが自動でバックアップされます。<br />
               復元しますか？
             </p>
             {restoreName && (
