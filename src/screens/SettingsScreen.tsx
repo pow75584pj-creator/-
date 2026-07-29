@@ -1179,19 +1179,33 @@ function NumberInput({
   onChange: (v: number) => void;
   suffix?: string;
 }) {
+  const [text, setText] = useState(String(value));
+
+  useEffect(() => {
+    setText(String(value));
+  }, [value]);
+
   return (
     <div className="relative">
       <input
         type="number"
         min={0}
         step={0.5}
-        value={value}
+        value={text}
         onChange={(e) => {
-          if (e.target.value === '') return;
-          onChange(Number(e.target.value));
+          const v = e.target.value;
+          setText(v);
+
+          if (v !== '') {
+            onChange(Number(v));
+          }
         }}
-        className="w-full rounded-[14px] px-4 py-3 focus:outline-none pr-12"
-        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
+        className="w-full rounded-[14px] px-4 and py-3 focus:outline-none pr-12"
+        style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-default)',
+          color: 'var(--text-primary)',
+        }}
       />
       {suffix && (
         <span
