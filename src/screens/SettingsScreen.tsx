@@ -69,6 +69,7 @@ export function SettingsScreen({
   const autoBackups = getAutoBackups();
   const spTypes = state.specialLeaveTypes;
   const spSummary = useMemo(() => computeSpecialLeaveSummary(state), [state]);
+  const autoBackups = getAutoBackups();
 
   useEffect(() => { setPermState(getPermissionState()); }, []);
 
@@ -897,7 +898,37 @@ export function SettingsScreen({
             </div>
           </button>
           <input ref={fileRef} type="file" accept="application/json,.json" onChange={handlePickRestoreFile} className="hidden" />
+          {autoBackups.length > 0 && (
+  <div
+    className="rounded-[14px] p-3"
+    style={{
+      background: 'var(--bg-subtle)',
+      border: '1px solid var(--border-default)',
+    }}
+  >
+    <p
+      className="text-[14px] font-medium"
+      style={{ color: 'var(--text-secondary)' }}
+    >
+      自動バックアップ
+    </p>
 
+    <p
+      className="text-[13px] mt-1"
+      style={{ color: 'var(--text-muted)' }}
+    >
+      保存数 {autoBackups.length}/3件
+    </p>
+
+    <p
+      className="text-[13px]"
+      style={{ color: 'var(--text-muted)' }}
+    >
+      最終保存日時：
+      {new Date(autoBackups[0].createdAt).toLocaleString('ja-JP')}
+    </p>
+  </div>
+)}
           {importMsg && (
             <p className="text-[15px] text-center font-medium" style={{ color: importMsg.includes('失敗') ? 'rgb(255, 59, 48)' : '#0d9488' }}>
               {importMsg}
