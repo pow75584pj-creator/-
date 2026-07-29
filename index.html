@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no, maximum-scale=1.0" />
+    <meta name="theme-color" content="#0d9488" />
+    <link rel="icon" type="image/png" href="/icons/favicon.png" />
+    <link rel="icon" type="image/x-icon" href="/icons/favicon.ico" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="有給管理" />
+    <meta name="description" content="有給休暇の残日数と消化履歴を管理するアプリ" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>有給管理</title>
+    <!-- Preload main entry so the browser starts fetching JS while HTML parses -->
+    <link rel="modulepreload" href="/src/main.tsx" />
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('yukyu-theme');
+          var mode = (t === 'light' || t === 'dark' || t === 'system') ? t : 'system';
+          var dark = mode === 'dark' || (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          if (dark) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.style.colorScheme = 'dark';
+          } else {
+            document.documentElement.style.colorScheme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
+    <style>
+      /* The splash is rendered inline so it appears the instant HTML parses,
+         before any JS/CSS loads. Background is always green — never black. */
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: #0d9488;
+      }
+      #splash {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0d9488 0%, #115e59 100%);
+        opacity: 1;
+        transition: opacity 0.35s ease;
+      }
+      #splash.hide {
+        opacity: 0;
+        pointer-events: none;
+      }
+      #splash-logo {
+        width: 96px;
+        height: 96px;
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: scaleIn 0.4s ease-out;
+      }
+      #splash-title {
+        margin-top: 20px;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+        opacity: 0;
+        animation: fadeIn 0.4s ease-out 0.15s forwards;
+      }
+      #splash-spinner {
+        margin-top: 28px;
+        width: 28px;
+        height: 28px;
+        border: 3px solid rgba(255, 255, 255, 0.25);
+        border-top-color: #ffffff;
+        border-radius: 50%;
+        opacity: 0;
+        animation: spin 0.8s linear infinite, fadeInUp 0.3s ease-out 0.4s forwards;
+      }
+      #splash-error {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        margin-top: 32px;
+        padding: 0 32px;
+        text-align: center;
+      }
+      #splash-error.show {
+        display: flex;
+      }
+      #splash-error-msg {
+        color: white;
+        font-size: 0.95rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+        opacity: 0.9;
+        line-height: 1.5;
+      }
+      #splash-retry-btn {
+        padding: 10px 28px;
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        color: white;
+        font-size: 0.95rem;
+        font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+        font-weight: 600;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+        transition: background 0.15s ease;
+      }
+      #splash-retry-btn:active {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      @keyframes scaleIn {
+        from { transform: scale(0.8); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @keyframes fadeInUp {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="splash">
+      <div id="splash-logo">
+        <svg width="52" height="52" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="14" width="48" height="42" rx="6" stroke="white" stroke-width="3.5" fill="none" />
+          <path d="M8 26h48" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+          <path d="M20 8v8M44 8v8" stroke="white" stroke-width="3.5" stroke-linecap="round" />
+          <circle cx="24" cy="40" r="3.5" fill="white" />
+          <circle cx="40" cy="40" r="3.5" fill="white" />
+        </svg>
+      </div>
+      <p id="splash-title">有給管理</p>
+      <div id="splash-spinner"></div>
+      <div id="splash-error">
+        <p id="splash-error-msg">読み込みに失敗しました。再試行してください</p>
+        <button id="splash-retry-btn" type="button">再試行</button>
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function () {
+        var splash = document.getElementById('splash');
+        var spinner = document.getElementById('splash-spinner');
+        var errorBox = document.getElementById('splash-error');
+        var removed = false;
+
+        function showLoading() {
+          if (spinner) spinner.style.display = '';
+          if (errorBox) errorBox.classList.remove('show');
+        }
+
+        function showError() {
+          if (spinner) spinner.style.display = 'none';
+          if (errorBox) errorBox.classList.add('show');
+        }
+
+        function removeSplash() {
+          if (removed) return;
+          removed = true;
+          splash.classList.add('hide');
+          setTimeout(function () { if (splash.parentNode) splash.remove(); }, 400);
+        }
+
+        window.__splashControl = {
+          ready: removeSplash,
+          error: showError,
+          retry: showLoading,
+        };
+
+        document.getElementById('splash-retry-btn').addEventListener('click', function () {
+          showLoading();
+          // Tell the app to re-attempt initialization
+          window.dispatchEvent(new Event('bolt-app-retry'));
+        });
+
+        // Safety fallback: never block the user longer than 8s.
+        // If init never signals, hide splash so the app is at least visible.
+        setTimeout(function () { removeSplash(); }, 8000);
+
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').catch(function () {});
+          });
+        }
+      })();
+    </script>
+  </body>
+</html>

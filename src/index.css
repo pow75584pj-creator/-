@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --bg-app: #f2f2f7;
+  --bg-card: #ffffff;
+  --bg-subtle: #f2f2f7;
+  --border-default: rgba(0, 0, 0, 0.06);
+  --text-primary: #1c1c1e;
+  --text-secondary: #8e8e93;
+  --text-muted: #aeaeb2;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg-app: #000000;
+  --bg-card: #1c1c1e;
+  --bg-subtle: #2c2c2e;
+  --border-default: rgba(255, 255, 255, 0.08);
+  --text-primary: #f2f2f7;
+  --text-secondary: #98989f;
+  --text-muted: #636366;
+}
+
+html {
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  background: var(--bg-app);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Hiragino Sans', 'Yu Gothic', 'Noto Sans JP', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+  overflow-x: hidden;
+  letter-spacing: -0.01em;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+button {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Screen transition */
+.screen-enter {
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Card base — subtle, Apple-style */
+.card-base {
+  background: var(--bg-card);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 0.5px 1px rgba(0, 0, 0, 0.04);
+}
+
+/* Button press effect */
+.btn-press {
+  transition: transform 0.12s ease;
+}
+.btn-press:active {
+  transform: scale(0.97);
+}

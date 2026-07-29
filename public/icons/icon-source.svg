@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!-- Solid emerald green background -->
+  <rect width="1024" height="1024" fill="#27A870"/>
+
+  <!-- Calendar white body -->
+  <rect x="148" y="178" width="716" height="566" rx="70" ry="70" fill="white"/>
+
+  <!-- Header divider line -->
+  <rect x="148" y="318" width="716" height="8" fill="#D4EDE0"/>
+
+  <!-- Left ring hook -->
+  <rect x="312" y="116" width="56" height="100" rx="28" ry="28" fill="white"/>
+  <rect x="325" y="124" width="30" height="84" rx="15" ry="15" fill="#27A870"/>
+
+  <!-- Right ring hook -->
+  <rect x="636" y="116" width="56" height="100" rx="28" ry="28" fill="white"/>
+  <rect x="649" y="124" width="30" height="84" rx="15" ry="15" fill="#27A870"/>
+
+  <!-- Dot grid: light mint rounded squares -->
+  <rect x="202" y="352" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="292" y="352" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="382" y="352" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="472" y="352" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="202" y="440" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="292" y="440" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="382" y="440" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="202" y="528" width="66" height="66" rx="12" fill="#A8D8BD"/>
+  <rect x="292" y="528" width="66" height="66" rx="12" fill="#A8D8BD"/>
+
+  <!-- Bold GREEN checkmark -->
+  <polyline
+    points="500,592 596,698 802,470"
+    fill="none"
+    stroke="#2B9B4F"
+    stroke-width="78"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
