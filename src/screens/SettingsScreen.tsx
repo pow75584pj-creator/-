@@ -514,8 +514,20 @@ export function SettingsScreen({
           </Field>
 
           <Field label="1日の勤務時間">
-            <NumberInput value={draft.workingHours} onChange={(v) => update('workingHours', v)} suffix="時間" />
-          </Field>
+  <NumberInput
+    value={draft.workingHours}
+    onChange={(v) => update('workingHours', v)}
+    suffix="時間"
+  />
+</Field>
+
+<Field label="週の勤務日数">
+  <NumberInput
+    value={draft.weeklyWorkDays}
+    onChange={(v) => update('weeklyWorkDays', v)}
+    suffix="日"
+  />
+</Field>
         </Section>
 
         {/* 消化設定 */}
