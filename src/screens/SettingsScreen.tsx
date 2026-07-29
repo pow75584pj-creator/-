@@ -1186,11 +1186,21 @@ function NumberInput({
         min={0}
         step={0.5}
         value={value}
-        onChange={(e) => onChange(Number(e.target.value) || 0)}
+        onChange={(e) => {
+          if (e.target.value === '') return;
+          onChange(Number(e.target.value));
+        }}
         className="w-full rounded-[14px] px-4 py-3 focus:outline-none pr-12"
         style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
       />
-      {suffix && <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[15px]" style={{ color: 'var(--text-muted)' }}>{suffix}</span>}
+      {suffix && (
+        <span
+          className="absolute right-4 top-1/2 -translate-y-1/2 text-[15px]"
+          style={{ color: 'var(--text-muted)' }}
+        >
+          {suffix}
+        </span>
+      )}
     </div>
   );
 }
