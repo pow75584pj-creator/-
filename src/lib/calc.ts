@@ -274,64 +274,22 @@ export function sortRecords(records: LeaveRecord[]): LeaveRecord[] {
   return [...records].sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : b.createdAt - a.createdAt));
 }
 
-// 日本の有給比例付与例（週所定労働日数別）
-export const PART_TIME_GRANT_TABLE: Record<number, { tenure: number; days: number }[]> = {
-  4: [
-    { tenure: 0.5, days: 7 },
-    { tenure: 1.5, days: 8 },
-    { tenure: 2.5, days: 9 },
-    { tenure: 3.5, days: 10 },
-    { tenure: 4.5, days: 12 },
-    { tenure: 5.5, days: 13 },
-    { tenure: 6.5, days: 15 },
-  ],
-  3: [
-    { tenure: 0.5, days: 5 },
-    { tenure: 1.5, days: 6 },
-    { tenure: 2.5, days: 6 },
-    { tenure: 3.5, days: 8 },
-    { tenure: 4.5, days: 9 },
-    { tenure: 5.5, days: 10 },
-    { tenure: 6.5, days: 11 },
-  ],
-  2: [
-    { tenure: 0.5, days: 3 },
-    { tenure: 1.5, days: 4 },
-    { tenure: 2.5, days: 4 },
-    { tenure: 3.5, days: 5 },
-    { tenure: 4.5, days: 6 },
-    { tenure: 5.5, days: 6 },
-    { tenure: 6.5, days: 7 },
-  ],
-  1: [
-    { tenure: 0.5, days: 1 },
-    { tenure: 1.5, days: 2 },
-    { tenure: 2.5, days: 2 },
-    { tenure: 3.5, days: 2 },
-    { tenure: 4.5, days: 3 },
-    { tenure: 5.5, days: 3 },
-    { tenure: 6.5, days: 3 },
-  ],
-};
+// 日本の有給付与例（勤続年数に応じた付与日数）
+export const GRANT_TABLE: { tenure: number; days: number }[] = [
+  { tenure: 0.5, days: 10 },
+  { tenure: 1.5, days: 11 },
+  { tenure: 2.5, days: 12 },
+  { tenure: 3.5, days: 14 },
+  { tenure: 4.5, days: 16 },
+  { tenure: 5.5, days: 18 },
+  { tenure: 6.5, days: 20 },
+];
 
-export function grantDaysForTenure(
-  tenureYears: number,
-  weeklyWorkDays = 5
-): number {
-  // 週5日以上は通常付与
-  const table =
-    weeklyWorkDays >= 5
-      ? GRANT_TABLE
-      : PART_TIME_GRANT_TABLE[Math.floor(weeklyWorkDays)] ?? GRANT_TABLE;
-
+export function grantDaysForTenure(tenureYears: number): number {
   let result = 0;
-
-  for (const entry of table) {
-    if (tenureYears >= entry.tenure - 0.01) {
-      result = entry.days;
-    }
+  for (const entry of GRANT_TABLE) {
+    if (tenureYears >= entry.tenure - 0.01) result = entry.days;
   }
-
   return result;
 }
 
@@ -349,7 +307,7 @@ export function grantDaysAtDate(settings: Settings, grantDate: string): number {
   const hire = new Date(settings.hireDate + 'T00:00:00');
   if (Number.isNaN(grant.getTime()) || Number.isNaN(hire.getTime())) return settings.currentYearDays;
   const tenure = (grant.getTime() - hire.getTime()) / (365.25 * 24 * 60 * 60 * 1000);
-  return grantDaysForTenure(tenure, settings.weeklyWorkDays);
+  return grantDaysForTenure(tenure);
 }
 
 // 入社日の6か月後を初回付与日として計算する（自動設定用）

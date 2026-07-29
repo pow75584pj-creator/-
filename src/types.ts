@@ -67,7 +67,6 @@ export interface Settings {
   carriedOverDays: number; // 前年度繰越日数
   fiscalYearStart: { month: number; day: number }; // 年度開始日
   workingHours: number; // 1日の勤務時間（時間）
-  weeklyWorkDays: number; // 週の勤務日数
   // 消化設定
   consumeFrom: 'current' | 'carried'; // 消化順
   // 繰越設定

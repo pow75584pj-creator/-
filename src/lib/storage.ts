@@ -23,7 +23,6 @@ export const defaultSettings: Settings = {
   carriedOverDays: 0,
   fiscalYearStart: { month: 4, day: 1 },
   workingHours: 8,
-  weeklyWorkDays: 5,
   consumeFrom: 'current',
   carryOverLimit: 20,
   carryOverExpiryYears: 2,

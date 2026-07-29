@@ -514,20 +514,8 @@ export function SettingsScreen({
           </Field>
 
           <Field label="1日の勤務時間">
-  <NumberInput
-    value={draft.workingHours}
-    onChange={(v) => update('workingHours', v)}
-    suffix="時間"
-  />
-</Field>
-
-<Field label="週の勤務日数">
-  <NumberInput
-    value={draft.weeklyWorkDays}
-    onChange={(v) => update('weeklyWorkDays', v)}
-    suffix="日"
-  />
-</Field>
+            <NumberInput value={draft.workingHours} onChange={(v) => update('workingHours', v)} suffix="時間" />
+          </Field>
         </Section>
 
         {/* 消化設定 */}
@@ -1191,33 +1179,19 @@ function NumberInput({
   onChange: (v: number) => void;
   suffix?: string;
 }) {
-  const [text, setText] = useState(String(value));
-
-  useEffect(() => {
-    setText(String(value));
-  }, [value]);
-
   return (
     <div className="relative">
       <input
         type="number"
         min={0}
         step={0.5}
-        value={text}
+        value={value}
         onChange={(e) => {
-          const v = e.target.value;
-          setText(v);
-
-          if (v !== '') {
-            onChange(Number(v));
-          }
+          if (e.target.value === '') return;
+          onChange(Number(e.target.value));
         }}
-        className="w-full rounded-[14px] px-4 and py-3 focus:outline-none pr-12"
-        style={{
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-default)',
-          color: 'var(--text-primary)',
-        }}
+        className="w-full rounded-[14px] px-4 py-3 focus:outline-none pr-12"
+        style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', color: 'var(--text-primary)' }}
       />
       {suffix && (
         <span
