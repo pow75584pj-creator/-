@@ -1182,7 +1182,8 @@ function NumberInput({
   return (
     <div className="relative">
       <input
-        type="number"
+        type="text"
+        inputMode="decimal"
         min={0}
         step={0.5}
         value={value}
