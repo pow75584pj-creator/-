@@ -921,7 +921,7 @@ export function SettingsScreen({
       <Section title="アプリ情報" icon="ℹ️">
         <InfoRow label="アプリ名" value="有給管理" />
         <InfoRow label="Version" value="1.0.0" />
-        <InfoRow label="最終更新日" value="2026/07/27" last />
+        <InfoRow label="最終更新日" value={new Date(__BUILD_DATE__).toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })} last />
       </Section>
 
       {/* 全データ削除確認ダイアログ */}
