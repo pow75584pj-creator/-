@@ -58,6 +58,7 @@ export function SettingsScreen({
   const [confirmSpDelete, setConfirmSpDelete] = useState<SpecialLeaveType | null>(null);
   const [grantAccordionOpen, setGrantAccordionOpen] = useState(false);
   const [spAccordionOpen, setSpAccordionOpen] = useState(false);
+
   const spTypes = state.specialLeaveTypes;
   const spSummary = useMemo(() => computeSpecialLeaveSummary(state), [state]);
 
