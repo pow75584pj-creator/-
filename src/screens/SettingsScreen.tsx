@@ -12,7 +12,14 @@ import {
   computeTenure, defaultFirstGrantDate, grantDaysAtDate, grantDaysForTenure, GRANT_TABLE,
 } from '@/lib/calc';
 import {
-  clearState, defaultSettings, exportState, importState, SPECIAL_LEAVE_COLORS, SPECIAL_LEAVE_COLOR_KEYS, uid,
+  clearState,
+  createAutoBackup,
+  defaultSettings,
+  exportState,
+  importState,
+  SPECIAL_LEAVE_COLORS,
+  SPECIAL_LEAVE_COLOR_KEYS,
+  uid,
 } from '@/lib/storage';
 import {
   getPermissionState, requestPermission, runStartupNotifications, type NotificationPermissionState,
@@ -116,17 +123,22 @@ export function SettingsScreen({
   }
 
   function downloadPreRestoreBackup() {
-    const now = new Date();
-    const pad = (n: number) => String(n).padStart(2, '0');
-    const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
-    const blob = new Blob([exportState(state)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `有給管理_復元前バックアップ_${ts}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  }
+  createAutoBackup(state);
+
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const ts = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}`;
+
+  const blob = new Blob([exportState(state)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `有給管理_復元前バックアップ_${ts}.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
 
   function handleConfirmRestore() {
     if (!pendingImport) { setRestoreFile(null); return; }

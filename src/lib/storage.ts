@@ -2,6 +2,8 @@ import type { AppState, GrantRecord, LeaveRecord, NotificationLog, NotificationS
 
 const STORAGE_KEY = 'yukyu-app-state-v1';
 
+const AUTO_BACKUP_KEY = 'yukyu-auto-backups-v1';
+const AUTO_BACKUP_LIMIT = 3;
 // In-memory cache for faster subsequent loads (e.g. hot reload, re-mount)
 let memoryCache: AppState | null = null;
 
@@ -170,4 +172,40 @@ export function importState(json: string): AppState {
 export function clearState(): void {
   memoryCache = null;
   localStorage.removeItem(STORAGE_KEY);
+}
+export interface AutoBackup {
+  id: string;
+  createdAt: string;
+  data: string;
+}
+
+export function createAutoBackup(state: AppState): void {
+  try {
+    const existing = getAutoBackups();
+
+    const backup: AutoBackup = {
+      id: uid(),
+      createdAt: new Date().toISOString(),
+      data: exportState(state),
+    };
+
+    const updated = [backup, ...existing].slice(0, AUTO_BACKUP_LIMIT);
+
+    localStorage.setItem(AUTO_BACKUP_KEY, JSON.stringify(updated));
+  } catch {
+    // バックアップ失敗時は通常処理を継続
+  }
+}
+
+export function getAutoBackups(): AutoBackup[] {
+  try {
+    const raw = localStorage.getItem(AUTO_BACKUP_KEY);
+    if (!raw) return [];
+
+    const parsed = JSON.parse(raw);
+
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
 }
